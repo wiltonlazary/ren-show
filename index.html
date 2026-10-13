@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ren-show</title>
+<link rel="stylesheet" href="./app.css">
+</head>
+<body>
+<div id="app"></div>
+<script type="module">
+// ?runtime loads the automatic-runtime bundle; the default is compiled templates.
+const mode = new URLSearchParams(location.search).has('runtime') ? 'runtime' : 'compiled';
+import(`./${mode}/main.js`);
+</script>
+</body>
+</html>
