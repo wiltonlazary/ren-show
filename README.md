@@ -1,13 +1,15 @@
 # ren-show
 
-A live tour of the features of [rrx-core](../../../rrx-core/wtree/_repo_) (the reactive
-core), [ren-core](../../../ren-core/wtree/_repo_) (the renderer-neutral components) and
-its renderers [ren-dom](../../../ren-dom/wtree/_repo_),
-[ren-skia](../../../ren-skia/wtree/_repo_) and
-[ren-three](../../../ren-three/wtree/_repo_) (the drawn two on
-[ren-canv](../../../ren-canv/wtree/_repo_)'s engine), with
-[ren-html](../../../ren-html/wtree/_repo_) and
-[ren-json](../../../ren-json/wtree/_repo_) for server renders, all on one page.
+Live at <https://wiltonlazary.github.io/ren-show/>.
+
+A live tour of the features of [rrx-core](https://github.com/wiltonlazary/rrx-core) (the reactive
+core), [ren-core](https://github.com/wiltonlazary/ren-core) (the renderer-neutral components) and
+its renderers [ren-dom](https://github.com/wiltonlazary/ren-dom),
+[ren-skia](https://github.com/wiltonlazary/ren-skia) and
+[ren-three](https://github.com/wiltonlazary/ren-three) (the drawn two on
+[ren-canv](https://github.com/wiltonlazary/ren-canv)'s engine), with
+[ren-html](https://github.com/wiltonlazary/ren-html) and
+[ren-json](https://github.com/wiltonlazary/ren-json) for server renders, all on one page.
 Every public export of them has a live demo. It is one ren-core
 application, rendered by ren-dom: a sidebar of demos and, for each one, a working
 example, the APIs it covers and its own source. Everything is JavaScript.
@@ -132,7 +134,7 @@ npm run serve             # http://127.0.0.1:5173/ (add ?runtime for the automat
 npm run browser           # headless Chrome, both bundles, every demo (takes the machine-wide Chrome lock)
 ```
 
-Run node commands under the workspace caps (`../../../.ai/config/resources.md`). CanvasKit needs
+Run node commands under the workspace caps ([`../../../.ai/config/resources.md`](https://github.com/wiltonlazary/rui/blob/main/.ai/config/resources.md)). CanvasKit needs
 `--disable-wasm-trap-handler` under `ulimit -v`.
 
 ## Tests
@@ -145,7 +147,7 @@ Run node commands under the workspace caps (`../../../.ai/config/resources.md`).
   test. The async demo runs on real timers at a twentieth of its browser pace, and the tests await
   what it shows. No test sleeps: each awaits an event, the flushes of what a manual clock released (`flushed()`),
   the worker's messages crossing, or re-checks the page with a bound (`test/timers.test.js`
-  guards it; ../../../.ai/config/design.md).
+  guards it; [../../../.ai/config/design.md](https://github.com/wiltonlazary/rui/blob/main/.ai/config/design.md)).
 - `test/canvas.test.jsx` sets ren-show's Stack engine with `useLayout` for its whole process, as
   the layout worker does in the browser, and serves it over a `MessageChannel`; no other suite
   shares that process.
