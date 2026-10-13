@@ -1,0 +1,105 @@
+/* Terminal: a market terminal drawn by ren-skia. The page chrome (renderer
+   switch, feed, studies, meters) is DOM; the desk and its charts are
+   portable primitives on a canvas or on ren-dom, colored by the theme's
+   tokens. Every color here is a theme custom property, or a mix of one
+   with transparent. */
+
+.app-terminal {
+  --term-radius: 12px;
+  --term-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  outline: none;
+}
+
+.app-terminal button {
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.2;
+  padding: 6px 11px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.app-terminal button:hover { background: var(--raised); border-color: var(--muted); }
+
+.app-terminal .term-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px 20px;
+  padding: 12px 14px;
+  border: 1px solid var(--rule);
+  border-radius: var(--term-radius);
+  background: var(--surface);
+}
+.app-terminal .term-bar .group { display: flex; flex-direction: column; gap: 6px; }
+.app-terminal .term-bar .group.grow { flex: 1; align-items: flex-end; }
+.app-terminal .term-bar small { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); }
+.app-terminal .seg {
+  display: inline-flex;
+  padding: 2px;
+  gap: 2px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--soft);
+}
+.app-terminal .seg button { border: 0; background: none; color: var(--muted); padding: 5px 10px; border-radius: 7px; font-size: 12.5px; }
+.app-terminal .seg button:hover { color: var(--ink); background: var(--raised); }
+.app-terminal .seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px color-mix(in srgb, var(--ink) 18%, transparent), 0 0 0 1px var(--rule); }
+.app-terminal .status { font-family: var(--term-mono); font-size: 13px; color: var(--label); padding: 5px 0; }
+
+/* The canvases and the DOM roots: framed, never wider than the page. */
+.app-terminal .term-stage { min-width: 0; overflow-x: auto; }
+.app-terminal .pane {
+  border: 1px solid var(--rule);
+  border-radius: var(--term-radius);
+  overflow: hidden;
+  background: var(--surface);
+  box-sizing: content-box;
+}
+.app-terminal .pane > [data-ren-root] { background: none; }
+.app-terminal .pane canvas { display: block; }
+.app-terminal .versus { display: flex; flex-wrap: wrap; gap: 14px; }
+.app-terminal .versus figure { margin: 0; display: flex; flex-direction: column; gap: 6px; }
+.app-terminal .versus figcaption { font-size: 12.5px; color: var(--muted); }
+.app-terminal .versus figcaption b { color: var(--ink); }
+.app-terminal .versus .cost { margin: 0; font-family: var(--term-mono); font-size: 12px; color: var(--label); }
+.app-terminal .quiet { color: var(--muted); }
+
+.app-terminal .term-copy { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; font-size: 13px; }
+.app-terminal .term-copy .copied {
+  font-family: var(--term-mono);
+  font-size: 12px;
+  color: var(--muted);
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: var(--soft);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.app-terminal .term-meters {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 8px;
+}
+.app-terminal .meter {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 9px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--surface);
+  min-width: 0;
+}
+.app-terminal .meter small { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; font-weight: 600; }
+.app-terminal .meter b { font-family: var(--term-mono); font-size: 12.5px; font-weight: 600; overflow-wrap: anywhere; }
+.app-terminal .term-note { margin: 0; font-size: 12.5px; line-height: 1.55; color: var(--muted); max-width: 110ch; }

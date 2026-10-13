@@ -1,0 +1,613 @@
+/* Studio: a design tool's chrome around the canvas. Every color is the
+   theme's (custom properties set by the shell); the canvas and the 3D
+   preview draw with the same theme through `look()`. */
+
+.app-studio {
+  container-type: inline-size;
+  --studio-radius: 12px;
+  --studio-lift: 0 1px 2px color-mix(in srgb, var(--ink) 8%, transparent), 0 8px 24px color-mix(in srgb, var(--ink) 7%, transparent);
+  display: grid;
+  gap: 12px;
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1.4;
+  outline: none;
+}
+
+.app-studio button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.app-studio .icon {
+  display: block;
+}
+
+/* ---- Toolbar */
+
+.app-studio .bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 8px 10px;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--studio-radius);
+  box-shadow: var(--studio-lift);
+}
+
+.app-studio .bar .file {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-right: 10px;
+  margin-right: 2px;
+  border-right: 1px solid var(--rule);
+}
+
+.app-studio .bar .file strong {
+  display: block;
+  font-size: 14px;
+}
+
+.app-studio .bar .file small {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.app-studio .logo {
+  display: grid;
+  grid-template-columns: repeat(2, 9px);
+  gap: 3px;
+}
+
+.app-studio .logo i {
+  width: 9px;
+  height: 9px;
+  border-radius: 3px;
+  background: var(--series-0);
+}
+
+.app-studio .logo i:nth-child(2) {
+  background: var(--series-1);
+  border-radius: 50%;
+}
+
+.app-studio .logo i:nth-child(3) {
+  background: var(--series-3);
+  grid-column: span 2;
+  width: 21px;
+}
+
+.app-studio .tools,
+.app-studio .group {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  background: var(--soft);
+  border-radius: 10px;
+}
+
+.app-studio .tool {
+  display: grid;
+  place-items: center;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 6px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--label);
+  font-size: 16px;
+}
+
+.app-studio .tool:hover:not(:disabled):not(.on) {
+  background: var(--raised);
+  color: var(--ink);
+}
+
+.app-studio .tool.on {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.app-studio .tool:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.app-studio .level {
+  min-width: 44px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  color: var(--label);
+}
+
+.app-studio button.text {
+  height: 30px;
+  padding: 0 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.app-studio button.text:hover {
+  background: var(--raised);
+  border-color: var(--accent);
+}
+
+.app-studio button.text.danger {
+  color: var(--danger);
+}
+
+.app-studio .group button.text {
+  border: 0;
+  background: transparent;
+}
+
+.app-studio .segmented {
+  display: inline-flex;
+  padding: 3px;
+  gap: 2px;
+  background: var(--soft);
+  border-radius: 10px;
+}
+
+.app-studio .bar .segmented {
+  margin-left: auto;
+}
+
+.app-studio .segmented button {
+  height: 28px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.app-studio .segmented button.on {
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--ink) 14%, transparent);
+}
+
+/* ---- Work area: layers, canvas, inspector */
+
+.app-studio .work {
+  display: grid;
+  grid-template-columns: 208px minmax(0, 1fr) 248px;
+  gap: 12px;
+  align-items: start;
+}
+
+.app-studio .panel {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--studio-radius);
+  box-shadow: var(--studio-lift);
+  padding: 10px;
+  min-width: 0;
+}
+
+.app-studio .panel h3 {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 2px 4px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--label);
+}
+
+.app-studio .panel h4 {
+  margin: 14px 2px 6px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.app-studio .count {
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--soft);
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+/* Layers */
+
+.app-studio .layers ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 500px;
+  overflow: auto;
+}
+
+.app-studio .layer {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 4px 0 6px;
+  border-radius: 7px;
+  cursor: default;
+  user-select: none;
+}
+
+.app-studio .layer:hover,
+.app-studio .layer.hot {
+  background: var(--soft);
+}
+
+.app-studio .layer.on {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.app-studio .layer.off .name,
+.app-studio .layer.off .kind {
+  opacity: 0.45;
+}
+
+.app-studio .layer .kind {
+  color: var(--muted);
+  flex: none;
+}
+
+.app-studio .layer.on .kind {
+  color: var(--accent);
+}
+
+.app-studio .layer .name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.app-studio .mini {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  opacity: 0;
+}
+
+.app-studio .mini .icon {
+  width: 15px;
+  height: 15px;
+}
+
+.app-studio .layer:hover .mini,
+.app-studio .layer.off .mini,
+.app-studio .mini.pinned,
+.app-studio .mini:focus-visible {
+  opacity: 1;
+}
+
+.app-studio .mini:hover {
+  background: var(--raised);
+  color: var(--ink);
+}
+
+/* The canvas */
+
+.app-studio .middle {
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+  min-width: 0;
+}
+
+.app-studio .stage {
+  position: relative;
+  max-width: 100%;
+  overflow: hidden;
+  border-radius: var(--studio-radius);
+  border: 1px solid var(--rule);
+  background: var(--canvas);
+  box-shadow: var(--studio-lift);
+  touch-action: none;
+  cursor: default;
+}
+
+.app-studio .stage canvas {
+  display: block;
+  outline: none;
+}
+
+.app-studio .stage[data-tool='hand'] canvas {
+  cursor: grab;
+}
+
+.app-studio .stage[data-tool='rect'] canvas,
+.app-studio .stage[data-tool='ellipse'] canvas,
+.app-studio .stage[data-tool='frame'] canvas,
+.app-studio .stage[data-tool='arrow'] canvas {
+  cursor: crosshair;
+}
+
+.app-studio .stage[data-tool='text'] canvas {
+  cursor: text;
+}
+
+.app-studio .stage > .quiet {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  margin: 0;
+  color: var(--muted);
+}
+
+.app-studio .status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin: 0;
+  width: 100%;
+  justify-content: center;
+  color: var(--muted);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.app-studio .status .where {
+  color: var(--accent);
+}
+
+/* Inspector */
+
+.app-studio .inspector {
+  max-height: 560px;
+  overflow: auto;
+}
+
+.app-studio .inspector .title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--accent);
+}
+
+.app-studio .inspector .grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.app-studio .num {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-left: 8px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--raised);
+}
+
+.app-studio .num:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.app-studio .num span {
+  min-width: 14px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.app-studio .num [data-ren='Edit'] {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  padding: 0 6px 0 0;
+  font-variant-numeric: tabular-nums;
+  outline: none;
+}
+
+.app-studio .inspector textarea[data-ren='Edit'] {
+  width: 100%;
+  padding: 6px 8px;
+  font: inherit;
+}
+
+.app-studio .swatches {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+}
+
+.app-studio .swatch {
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--paint);
+  padding: 0;
+  transition: transform 120ms ease;
+}
+
+.app-studio .swatch[data-token='none'] {
+  background: linear-gradient(135deg, transparent 45%, var(--danger) 45%, var(--danger) 55%, transparent 55%), var(--surface);
+}
+
+.app-studio .swatch:hover {
+  transform: scale(1.1);
+}
+
+.app-studio .swatch.on {
+  box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--accent);
+}
+
+.app-studio .actions,
+.app-studio .align {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.app-studio .hint {
+  margin: 14px 2px 2px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.app-studio .facts {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px 10px;
+  margin: 0 4px;
+}
+
+.app-studio .facts dt {
+  color: var(--muted);
+}
+
+.app-studio .facts dd {
+  margin: 0;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.app-studio .keys {
+  list-style: none;
+  margin: 0;
+  padding: 0 4px;
+  display: grid;
+  gap: 6px;
+}
+
+.app-studio .keys li {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.app-studio kbd {
+  padding: 1px 6px;
+  border: 1px solid var(--border);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  background: var(--raised);
+  color: var(--label);
+  font: 11px ui-monospace, SFMono-Regular, Menlo, monospace;
+  white-space: nowrap;
+}
+
+/* ---- The 3D preview and the export */
+
+.app-studio .lower {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+}
+
+.app-studio .lower header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.app-studio .lower header h3 {
+  margin: 0 4px;
+}
+
+.app-studio .lower header .note {
+  flex: 1;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.app-studio .scene {
+  max-width: 100%;
+  overflow: hidden;
+  border-radius: 9px;
+  background: var(--canvas);
+}
+
+.app-studio .export header .segmented {
+  margin-right: auto;
+}
+
+.app-studio .export .meta {
+  margin: 0 4px 6px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.app-studio .export pre.code {
+  margin: 0;
+  max-height: 268px;
+  overflow: auto;
+  padding: 10px 12px;
+  border-radius: 9px;
+  background: var(--code);
+  border: 1px solid var(--rule);
+  font: 11.5px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.app-studio .quiet {
+  color: var(--muted);
+}
+
+/* ---- Narrow (the space the shell gives, not the window): panels stack under the canvas */
+
+@container (max-width: 1100px) {
+  .app-studio .work {
+    grid-template-columns: minmax(0, 1fr) 248px;
+  }
+
+  .app-studio .layers {
+    grid-column: 1 / -1;
+    order: 3;
+  }
+
+  .app-studio .layers ol {
+    max-height: 220px;
+  }
+
+  .app-studio .lower {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@container (max-width: 880px) {
+  .app-studio .work {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .app-studio .stage {
+    overflow: auto;
+  }
+
+  .app-studio .inspector {
+    max-height: none;
+  }
+}

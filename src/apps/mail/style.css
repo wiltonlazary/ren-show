@@ -1,0 +1,175 @@
+/* Mail: the page around the client (the renderer switcher, the stage, the
+   selection readout and the parity table). The client itself is portable
+   primitives styled in mail.jsx, the same on every renderer; here only the
+   page's own DOM, every color from the theme's custom properties. */
+
+.app-mail {
+  --mail-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  color: var(--ink);
+  min-width: 0;
+}
+
+/* The toolbar: the renderers as one segmented control, and the actions.
+   Only the toolbar's buttons: the DOM client's own are its primitives. */
+.app-mail .mail-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+.app-mail .mail-toolbar .grow { flex: 1; }
+.app-mail .seg {
+  display: inline-flex;
+  flex-wrap: wrap;
+  max-width: 100%;
+  padding: 3px;
+  gap: 2px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+}
+.app-mail .mail-toolbar button {
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.2;
+  padding: 7px 12px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color .12s ease, color .12s ease, border-color .12s ease;
+}
+/* A pressed segment keeps its accent under the pointer: its text is the accent's ink. */
+.app-mail .mail-toolbar button:hover:not(:disabled):not([aria-pressed="true"]) { background: var(--raised); }
+.app-mail .seg button[aria-pressed="true"] {
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-weight: 600;
+}
+.app-mail .mail-toolbar .quiet-button { border-color: var(--border); background: var(--surface); }
+.app-mail .mail-toolbar .primary {
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-weight: 600;
+}
+.app-mail .mail-toolbar .primary:hover:not(:disabled) { background: var(--accent); filter: brightness(1.08); }
+.app-mail .mail-toolbar button:disabled { opacity: .55; cursor: default; }
+.app-mail .mail-toolbar button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.app-mail .mail-note {
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* The stage: the client's own size; a narrow page scrolls it sideways. */
+.app-mail .mail-scroller {
+  max-width: 100%;
+  overflow-x: auto;
+  border-radius: var(--mail-radius);
+  border: 1px solid var(--rule);
+  box-shadow: 0 10px 30px color-mix(in srgb, var(--ink) 12%, transparent), 0 1px 3px color-mix(in srgb, var(--ink) 10%, transparent);
+  background: var(--canvas);
+  align-self: flex-start;
+}
+.app-mail .mail-stage {
+  position: relative;
+  overflow: hidden;
+}
+.app-mail .mail-stage > .quiet,
+.app-mail .mail-stage .quiet {
+  margin: 0;
+  padding: 24px;
+  color: var(--muted);
+}
+.app-mail .mail-stage canvas { display: block; outline: none; }
+
+/* What is selected in the live renderer. */
+.app-mail .mail-selection {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  margin: 0;
+  font-size: 13px;
+  min-width: 0;
+}
+.app-mail .mail-selection small {
+  flex: none;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+}
+.app-mail .mail-selection span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: var(--selection);
+  color: var(--ink);
+}
+
+/* The parity table: a narrow page scrolls it sideways. */
+.app-mail .mail-parity {
+  border: 1px solid var(--rule);
+  border-radius: var(--mail-radius);
+  background: var(--surface);
+  padding: 14px 16px;
+}
+.app-mail .mail-parity header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+.app-mail .mail-parity h3 { margin: 0; font-size: 15px; }
+.app-mail .mail-parity .summary { font-size: 13px; color: var(--muted); }
+.app-mail .mail-parity .explain {
+  margin: 6px 0 10px;
+  font-size: 13px;
+  color: var(--label);
+  max-width: 80ch;
+}
+.app-mail .mail-parity .table-scroll { overflow-x: auto; }
+.app-mail .mail-parity table {
+  width: 100%;
+  min-width: 560px;
+  border-collapse: collapse;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.app-mail .mail-parity th {
+  text-align: left;
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--muted);
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--rule);
+}
+.app-mail .mail-parity td {
+  padding: 7px 8px;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+}
+.app-mail .mail-parity tr:last-child td { border-bottom: 0; }
+.app-mail .mail-parity .verdict {
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: .05em;
+  color: var(--muted);
+}
+.app-mail .mail-parity tr.pass .verdict { color: var(--series-1); }
+.app-mail .mail-parity tr.fail .verdict { color: var(--danger); }
+.app-mail .mail-parity tr.running .verdict { color: var(--accent); }
+.app-mail .mail-parity .diff {
+  color: var(--danger);
+  font-size: 12px;
+  max-width: 48ch;
+}

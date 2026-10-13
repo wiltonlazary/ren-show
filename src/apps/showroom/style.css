@@ -1,0 +1,99 @@
+/* Showroom: one line of page around the three.js root, which holds the
+   whole experience (its interface is ren-core primitives inside the scene).
+   Every color is the theme's custom properties; the scene reads the same
+   theme through look(). */
+
+.app-showroom {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.app-showroom .strip {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  padding: 8px 12px;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+}
+
+.app-showroom .strip .badge {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--ink);
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.app-showroom .strip .where,
+.app-showroom .strip .fps,
+.app-showroom .strip .bag {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.app-showroom .strip .config {
+  flex: 1 1 280px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-showroom .strip button {
+  font: inherit;
+  padding: 4px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.app-showroom .strip button:hover {
+  background: var(--raised);
+}
+
+.app-showroom .strip button[aria-pressed='true'] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+
+/* The scene: the canvas at its fixed size, scrolled sideways on a narrow page. */
+.app-showroom .scene {
+  position: relative;
+  max-width: 100%;
+  overflow-x: auto;
+  border-radius: 16px;
+  border: 1px solid var(--rule);
+  background: var(--canvas);
+  box-sizing: content-box;
+}
+
+.app-showroom .scene canvas {
+  display: block;
+  /* Its CSS size is the size the renderer draws and picks at: never scaled down. */
+  max-width: none;
+  border-radius: 16px;
+  touch-action: none;
+  outline: none;
+}
+
+/* On a phone a vertical swipe over the scene scrolls the page; a sideways drag turns the product. */
+.app-showroom .scene.compact canvas {
+  touch-action: pan-y;
+}
+
+.app-showroom .scene .quiet {
+  margin: 0;
+  padding: 16px;
+  color: var(--muted);
+}
