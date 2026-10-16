@@ -42,7 +42,7 @@ a { color: var(--accent); }
   backdrop-filter: saturate(1.4) blur(12px);
   border-bottom: 1px solid var(--rule);
 }
-.brand { display: flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; min-width: 230px; }
+.brand { display: flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; min-width: 230px; border-radius: 8px; }
 .brand b { font-size: 19px; letter-spacing: -.03em; }
 .brand small { margin-left: 4px; color: var(--muted); font-size: 13px; }
 .mark { display: grid; grid-template-columns: repeat(3, 6px); gap: 3px; padding: 6px; border-radius: 9px; background: var(--accent-soft); }
