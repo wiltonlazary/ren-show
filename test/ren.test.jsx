@@ -538,6 +538,7 @@ describe('style', () => {
     const card = page.all('[data-side="dom"] > [data-ren="View"]')[0];
     assert.equal(card.style.getPropertyValue('border-radius'), '14px');
     assert.equal(card.style.getPropertyValue('width'), '300px');
+    assert.equal(card.style.getPropertyValue('user-select'), 'text', 'its text opted in to selection');
     page.click('Copy the Skia selection');
     assert.equal(value(page, 'selected on the canvas'), '(nothing selected)');
     // A triple press on the wrapped Label selects it all, on either canvas

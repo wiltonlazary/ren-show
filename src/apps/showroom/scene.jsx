@@ -327,6 +327,7 @@ function Stage() {
       <directionalLight name="rim" color={LIGHTS.rim} position={[0.5, 3, -5]} intensity={1.4} />
       <group
         name="stage"
+        cursor="grab"
         onPointerDown={(/** @type {any} */ e) => {
           if (typeof e.button === 'number' && e.button > 0) return;
           Object.assign(drag, { on: true, x: e.x, y: e.y, yaw: goal.yaw, pitch: goal.pitch, moved: false });

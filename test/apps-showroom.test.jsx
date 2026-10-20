@@ -323,12 +323,12 @@ describe('showroom', () => {
       s.press(s.at.reset);
       s.step(300);
       assert.ok(Math.abs(camera.position.z - HOME.distance) < 1e-3 && Math.abs(rig.rotation.y - HOME.yaw) < 2e-3, 'home again');
-      // The controls show the pointer cursor on the canvas; the scene keeps the page's.
+      // The controls show the pointer cursor on the canvas; the scene, dragged to orbit, the grab.
       const canvas = s.page.all('[data-ren-root="showroom-scene"] canvas')[0];
       s.three().input('pointermove', ...s.at.bag, { buttons: 0 });
       assert.equal(canvas.style.cursor, 'pointer');
       s.three().input('pointermove', 560, 260, { buttons: 0 });
-      assert.equal(canvas.style.cursor, '');
+      assert.equal(canvas.style.cursor, 'grab');
       // The turntable turns the camera until paused.
       s.press(s.at.rotate);
       assert.ok(texts(s.three().overlay).includes('Pause turntable'));

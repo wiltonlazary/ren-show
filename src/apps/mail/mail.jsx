@@ -606,8 +606,9 @@ function Reader(props) {
           /** @type {import('./data.js').Message} */
           let last = /** @type {any} */ (m());
           const msg = () => (last = m() ?? last);
+          // The message is read and quoted: its text selects (the buttons do not).
           return (
-            <View style={{ gap: 14 }}>
+            <View style={{ gap: 14, select: 'text' }}>
               <Label wrap text={() => msg().subject} style={{ fontSize: 21, fontWeight: 'bold', lineHeight: 1.3 }} />
               <View style={{ direction: 'row', gap: 6, wrap: true }}>
                 <For each={() => msg().labels}>

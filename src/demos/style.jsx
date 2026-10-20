@@ -23,7 +23,8 @@ import { Gallery, BADGE } from './primitives.jsx';
 export const ARABIC = 'بطاقة واحدة لكل عارض';
 
 /**
- * The card: primitives and their portable style, nothing renderer-specific.
+ * The card: primitives and their portable style, nothing renderer-specific;
+ * its text selects (`select: 'text'`), its buttons do not.
  * `line` hears the width of its Arabic line as its renderer lays it out.
  * @param {{ line?: (width: number) => void }} props
  */
@@ -32,7 +33,7 @@ export function Card(props) {
   const likes = $signal(R, 0);
   const c = look().colors;
   return (
-    <Box style={{ width: 300, padding: 16, gap: 12, background: c.surface, radius: 14, border: 1, borderColor: c.rule, shadow: { y: 6, blur: 18, color: '#0000002e' } }}>
+    <Box style={{ width: 300, padding: 16, gap: 12, background: c.surface, radius: 14, border: 1, borderColor: c.rule, shadow: { y: 6, blur: 18, color: '#0000002e' }, select: 'text' }}>
       <Box style={{ direction: 'row', align: 'center', gap: 12 }}>
         <Box style={{ width: 40, height: 40, radius: 20, background: c.accent }} />
         <Box style={{ grow: 1, shrink: 1, gap: 2 }}>

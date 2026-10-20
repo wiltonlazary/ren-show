@@ -226,7 +226,8 @@ export function Chart(props) {
   const ink = () => fade(paint.ink, 0x88);
   const hidden = { ...cell(0, 0, 1, 1), background: 'transparent' };
   const tag = { fontSize: 11, padding: /** @type {[number, number]} */ ([1, 4]), radius: 3, select: /** @type {const} */ ('none') };
-  // The readout: one row, or on a slim chart (a phone's) the prices over the volume and change.
+  // The readout: one row, or on a slim chart (a phone's) the prices over the volume and change;
+  // its text selects and copies.
   const slim = props.slim === true;
   const prices = () => {
     const s = series();
@@ -285,7 +286,7 @@ export function Chart(props) {
   return (
     <Box data-chart="price" style={() => ({ width: W, height: H, background: c.surface, color: c.ink })}>
       {slim ? (
-        <Box style={{ height: readoutOf(true), padding: [3, 8], overflow: 'hidden', justify: 'center' }}>
+        <Box style={{ height: readoutOf(true), padding: [3, 8], overflow: 'hidden', justify: 'center', select: 'text' }}>
           <Box style={{ direction: 'row', align: 'center', gap: 8, height: 20 }}>
             <Label text={() => series().symbol.id} style={{ fontWeight: 'bold', fontSize: 13 }} />
             <Label data-readout="ohlc" text={prices} style={() => ({ fontSize: 12, color: c.muted })} />
@@ -296,7 +297,7 @@ export function Chart(props) {
           </Box>
         </Box>
       ) : (
-        <Box style={{ direction: 'row', align: 'center', gap: 10, height: READOUT, padding: [0, 8], overflow: 'hidden' }}>
+        <Box style={{ direction: 'row', align: 'center', gap: 10, height: READOUT, padding: [0, 8], overflow: 'hidden', select: 'text' }}>
           <Label text={() => series().symbol.id} style={{ fontWeight: 'bold', fontSize: 13 }} />
           <Label data-readout="ohlc" text={readout} style={() => ({ fontSize: 12, color: c.muted })} />
           <Label text={legend} style={() => ({ fontSize: 11, color: c.muted, shrink: 1 })} />

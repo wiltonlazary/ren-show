@@ -266,7 +266,7 @@ export function SpecCard(p) {
   const { S, c } = p;
   const get = () => config(S);
   return (
-    <View onResize={p.onResize} style={() => card(c, 230)}>
+    <View onResize={p.onResize} style={() => ({ ...card(c, 230), select: 'text' })}>
       <Label text={PRODUCT.name} style={() => ({ fontSize: 17, fontWeight: 'bold', color: c.ink })} />
       <Label text={() => dollars(price(get()))} style={() => ({ fontSize: 15, color: c.accent, fontWeight: 'bold' })} />
       <View style={() => ({ height: 1, background: c.rule })} />
