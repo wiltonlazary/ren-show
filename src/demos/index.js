@@ -27,6 +27,7 @@ import table from './table.jsx';
 import canvas from './canvas.jsx';
 import render from './render.jsx';
 import input from './input.jsx';
+import hands from './hands.jsx';
 
 /**
  * @typedef {object} Demo
@@ -41,5 +42,5 @@ import input from './input.jsx';
 /** @type {Demo[]} */
 export const demos = /** @type {Demo[]} */ ([
   signals, scheduling, ownership, context, errors, tasks, async, stores, lists, introspection,
-  flow, transitions, primitives, style, events, input, resilience, roots, skia, three, together, workers, compiler, server, render, canvas, table,
+  flow, transitions, primitives, style, events, input, hands, resilience, roots, skia, three, together, workers, compiler, server, render, canvas, table,
 ]);

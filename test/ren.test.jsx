@@ -37,6 +37,7 @@ import server from '../src/demos/server.jsx';
 import transitions, { LATENCY as LOAD } from '../src/demos/transitions.jsx';
 import table from '../src/demos/table.jsx';
 import input from '../src/demos/input.jsx';
+import hands, { OPTED } from '../src/demos/hands.jsx';
 import render from '../src/demos/render.jsx';
 import async, { DELAYS } from '../src/demos/async.jsx';
 import { Remote, ROWS } from '../src/remote.jsx';
@@ -977,6 +978,39 @@ describe('input', () => {
       assert.match(skia.textContent, /scrolls [1-9]/);
       fire('wheel', { offsetX: 100, offsetY: 120, deltaY: 300, deltaX: 0, deltaMode: 0 });
       assert.ok(await until(() => skia.textContent.includes('The pinned note is above')), skia.textContent);
+    } finally {
+      page.dispose();
+    }
+  });
+});
+
+describe('hands', () => {
+  it('behaves as an app or a page, hears every press, and acts on the pressed text and the field on the DOM, Skia and three.js', async () => {
+    const { load } = threeStub();
+    const page = open(hands.View, { three: load, skia: async () => ({ kit, font }) });
+    try {
+      const host = (/** @type {string} */ id) => page.all(`[data-ren-root="desk-${id}"]`)[0];
+      const ready = () => until(() => ['dom', 'skia', 'three'].every(id => host(id) !== undefined && host(id).textContent.includes(`On ${id}:`)));
+      assert.ok(await ready(), page.text());
+      // An application by default: its host keeps loose text from selecting.
+      assert.match(host('dom').getAttribute('style') ?? '', /user-select: none/);
+      const dom = host('dom');
+      const button = (/** @type {string} */ text) => /** @type {any} */ ([...dom.querySelectorAll('button')].find(b => b.textContent === text));
+      // A press on the opted-in line reaches $presses; textAt names it.
+      const line = [...dom.querySelectorAll('[data-ren="Label"]')].find(l => l.textContent === OPTED);
+      line.dispatchEvent(new page.window.PointerEvent('pointerdown', { bubbles: true, cancelable: true, button: 0, pointerType: 'mouse' }));
+      assert.ok(await until(() => dom.textContent.includes(`heard mouse button 0 · pressed “${OPTED}”`)), dom.textContent);
+      // The desk's own menu selects the pressed text and reads it back.
+      button('Select the pressed text').click();
+      assert.ok(await until(() => dom.textContent.includes(`selected “${OPTED}”`)), dom.textContent);
+      // The field's actions: UPPER CASE replaces its text as a user's edit, which its onChange hears.
+      button('UPPER CASE').click();
+      const field = /** @type {any} */ (dom.querySelector('input'));
+      assert.ok(await until(() => field.value === 'REHEARSAL MOVED TO THURSDAY'), field.value);
+      // As a page, every root is made again, its loose text selectable again (inside the page's own app root).
+      page.click('Behave as a page');
+      assert.ok(await until(() => host('dom') !== undefined && /user-select: text/.test(host('dom').getAttribute('style') ?? '')), host('dom')?.getAttribute('style'));
+      assert.ok(await ready(), page.text());
     } finally {
       page.dispose();
     }
