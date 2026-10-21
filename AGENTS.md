@@ -39,7 +39,7 @@ ren-skia, ren-three, ren-html and ren-json (README, Commands).
 - Demos read the environment from `Assets` (`src/assets.js`), never from
   globals, so tests can supply a clock, CanvasKit and a worker port.
 - Build output goes to `artifact/dist` (the ignored link to
-  `../../build/_repo__0.1.0`); scratch goes to `artifact/tmp/<task>/`.
+  `../../build/_repo__0.1.12`); scratch goes to `artifact/tmp/<task>/`.
 - `npm test` is the gate (tsc, both JSX passes, the build). Run
   `npm run browser` (headless Chrome, under the machine-wide lock) before
   claiming that a change works in a browser.
