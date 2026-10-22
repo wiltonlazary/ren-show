@@ -1,11 +1,13 @@
-// The home page: what ren-core is, a live sample beside its source, the
-// flagship applications and the features they are built from.
+// The home page: what ren-core is, a live sample beside its source, a menu
+// of the family's repositories on GitHub, the flagship applications and the
+// features they are built from.
 
-import { $signal, $read, $write, $memo } from 'rrx-core';
+import { $signal, $read, $write, $memo, $cleanup, $owner } from 'rrx-core';
 import { $active, For } from 'ren-core';
 import { apps } from './apps/index.js';
 import { demos } from './demos/index.js';
 import { THEMES } from './themes.js';
+import { REPOS, repoUrl } from './repos.js';
 
 /** The sample's source, as it runs beside it. */
 const SAMPLE = `function Thermostat() {
@@ -37,6 +39,73 @@ const PILLARS = [
 /** The renderers and outputs, as badges. */
 const SURFACES = ['DOM', 'Shadow DOM', 'Skia canvas', 'three.js', 'Web Worker', 'HTML', 'JSON'];
 
+/**
+ * Every repository of the family, grouped, as links that open in a new tab.
+ * The button shows and hides them; Escape, a choice, or the focus or a
+ * press going elsewhere hides them.
+ */
+function Repos() {
+  const R = $active();
+  const shown = $signal(R, false);
+  /** @type {any} */
+  let box = null;
+  /** @type {any} */
+  let button = null;
+  const hide = (/** @type {boolean} */ refocus) => {
+    if (!$read(shown)) return;
+    $write(shown, false);
+    if (refocus) button?.focus?.();
+  };
+  const away = (/** @type {Event} */ e) => {
+    if (box !== null && !box.contains(e.target)) hide(false);
+  };
+  $cleanup(/** @type {any} */ ($owner(R)), () => box?.ownerDocument?.removeEventListener('pointerdown', away, true));
+  return (
+    <div
+      class={() => ($read(shown) ? 'repo-menu open' : 'repo-menu')}
+      ref={(/** @type {any} */ el) => {
+        box = el;
+        el.ownerDocument.addEventListener('pointerdown', away, true);
+      }}
+      onKeyDown={e => {
+        if (e.key === 'Escape' && $read(shown)) hide(true);
+      }}
+      onFocusOut={e => {
+        if (!box.contains(e.relatedTarget)) hide(false);
+      }}
+    >
+      <button
+        type="button"
+        class="cta ghost"
+        aria-expanded={() => String($read(shown))}
+        aria-controls="repos"
+        ref={(/** @type {any} */ el) => void (button = el)}
+        onClick={() => $write(shown, !$read(shown))}
+      >
+        GitHub
+        <i class="caret" aria-hidden="true" />
+      </button>
+      <nav class="repos" id="repos" aria-label="Repositories on GitHub">
+        {REPOS.map(group => (
+          <section>
+            <h3>{group.title}</h3>
+            <ul>
+              {group.repos.map(repo => (
+                <li>
+                  <a href={repoUrl(repo.name)} target="_blank" rel="noopener noreferrer" onClick={() => hide(false)}>
+                    <b>{repo.name}</b>
+                    <small>{repo.what}</small>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
+      </nav>
+    </div>
+  );
+}
+
 /** @param {{ go: (id: string) => void }} props */
 export function Home(props) {
   const R = $active();
@@ -60,14 +129,15 @@ export function Home(props) {
             ren-core renders one component model to the DOM, a Skia canvas, a three.js scene, a worker and the server, on a fine-grained
             reactive graph. Explore real applications built on it, then take each feature apart.
           </p>
-          <p class="actions">
+          <div class="actions">
             <a class="cta" href={`#${apps[0]?.id ?? demos[0].id}`} onClick={open(apps[0]?.id ?? demos[0].id)}>
               Open the apps
             </a>
             <a class="cta ghost" href={`#${demos[0].id}`} onClick={open(demos[0].id)}>
               Tour the features
             </a>
-          </p>
+            <Repos />
+          </div>
           <ul class="facts">
             <li>
               <b>{String(apps.length)}</b> applications

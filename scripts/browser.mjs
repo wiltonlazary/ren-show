@@ -734,7 +734,7 @@ try {
       await cdp.send('Log.enable');
       await cdp.send('Page.enable');
       await cdp.send('Page.navigate', { url: `http://127.0.0.1:${port}/${mode === 'runtime' ? '?runtime' : ''}` });
-      const ready = await cdp.send('Runtime.evaluate', { expression: `${PAGE}; (async () => { await showCheck.wait(() => document.querySelectorAll('nav a').length > 0); return [...document.querySelectorAll('nav a')].map(a => a.getAttribute('href').slice(1)); })()`, awaitPromise: true, returnByValue: true });
+      const ready = await cdp.send('Runtime.evaluate', { expression: `${PAGE}; (async () => { await showCheck.wait(() => document.querySelectorAll('#sections a').length > 0); return [...document.querySelectorAll('#sections a')].map(a => a.getAttribute('href').slice(1)); })()`, awaitPromise: true, returnByValue: true });
       if (ready.result.exceptionDetails) throw new Error(`page did not start: ${JSON.stringify(ready.result.exceptionDetails)}`);
       const ids = /** @type {string[]} */ (ready.result.result.value).filter(id => chosen === null || chosen.includes(id));
       console.log(`${mode}: ${ids.length} demos`);
@@ -848,7 +848,7 @@ try {
           await cdp.send('Page.navigate', { url: `http://127.0.0.1:${port}/?${mode === 'runtime' ? 'runtime&' : ''}phone=${width}#home` });
           // timer: deadline
           await Promise.race([loaded, new Promise((_, reject) => setTimeout(() => reject(new Error('the phone page did not load')), 30000))]);
-          await cdp.send('Runtime.evaluate', { expression: `${PAGE}; showCheck.wait(() => document.querySelector('nav a'))`, awaitPromise: true });
+          await cdp.send('Runtime.evaluate', { expression: `${PAGE}; showCheck.wait(() => document.querySelector('#sections a'))`, awaitPromise: true });
           console.log(`${mode}: phone, ${width} wide`);
           if (width === 390) {
             await run('drawer', 'showCheck.drawer()');
@@ -864,7 +864,7 @@ try {
           await cdp.send('Page.navigate', { url: `http://127.0.0.1:${port}/?${mode === 'runtime' ? 'runtime&' : ''}tablet=800#home` });
           // timer: deadline
           await Promise.race([loaded, new Promise((_, reject) => setTimeout(() => reject(new Error('the tablet page did not load')), 30000))]);
-          await cdp.send('Runtime.evaluate', { expression: `${PAGE}; showCheck.wait(() => document.querySelector('nav a'))`, awaitPromise: true });
+          await cdp.send('Runtime.evaluate', { expression: `${PAGE}; showCheck.wait(() => document.querySelector('#sections a'))`, awaitPromise: true });
           console.log(`${mode}: tablet, 800 wide`);
           await run('showroom', 'showCheck.showroomTablet()');
         }

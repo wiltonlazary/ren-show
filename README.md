@@ -106,7 +106,8 @@ text, so none loads the shaper.
 | --- | --- |
 | `src/main.jsx` | the browser entry: the `ren-show` root and its environment |
 | `src/app.jsx` | the shell: the top bar (command palette, theme menu), the sidebar of every section (on a narrow screen a drawer, opened from the top bar's menu button), the current section with its source, previous and next |
-| `src/home.jsx` | the home page: a live sample beside its source, the applications, the features they are built from |
+| `src/home.jsx` | the home page: a live sample beside its source, the GitHub menu (every repository of the family, grouped, each opening in a new tab), the applications, the features they are built from |
+| `src/repos.js` | the family's repositories on GitHub, grouped, as the GitHub menu lists them |
 | `src/apps/` | the flagship applications (`index.js` registers them), each in a folder with its own stylesheet, test, browser check and optional worker entry |
 | `src/themes.js` | the themes: every color on the page, as CSS custom properties, ren tokens and the `Look` context |
 | `src/demos/` | one module per demo (`export default { id, group, title, apis, summary, View }`), listed in `index.js` |

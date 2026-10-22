@@ -788,13 +788,13 @@ describe('shell', () => {
 
   it('lists every section, opens each one and disposes the previous', () => {
     const page = open(() => <App start="#signals" />);
-    const links = page.all('nav a');
+    const links = page.all('#sections a');
     assert.deepEqual(links.map(a => a.getAttribute('href')), sections.map(s => `#${s.id}`));
     assert.deepEqual(sections.slice(1 + apps.length).map(s => s.id), demos.map(d => d.id), 'the demos after home and the applications');
     for (const section of sections) {
-      page.all('nav a').find(a => a.getAttribute('href') === `#${section.id}`).click();
+      page.all('#sections a').find(a => a.getAttribute('href') === `#${section.id}`).click();
       assert.equal(page.all('article')[0].getAttribute('data-demo'), section.id);
-      assert.equal(page.all('nav a.here')[0].getAttribute('href'), `#${section.id}`);
+      assert.equal(page.all('#sections a.here')[0].getAttribute('href'), `#${section.id}`);
     }
     page.dispose();
   });
@@ -812,9 +812,9 @@ describe('shell', () => {
     assert.equal(menu.getAttribute('aria-expanded'), 'true');
     assert.ok(html.classList.contains('drawer-open'), 'the page behind does not scroll');
     await Promise.resolve();
-    assert.ok(page.document.activeElement === page.all('nav a.here')[0], 'the focus moves to the current section');
+    assert.ok(page.document.activeElement === page.all('#sections a.here')[0], 'the focus moves to the current section');
     // Choosing a section goes there and closes.
-    page.all('nav a').find(a => a.getAttribute('href') === '#stores').click();
+    page.all('#sections a').find(a => a.getAttribute('href') === '#stores').click();
     assert.equal(page.all('article')[0].getAttribute('data-demo'), 'stores');
     assert.ok(!shown() && !html.classList.contains('drawer-open'));
     // Escape closes and gives the focus back to the button.
@@ -861,6 +861,32 @@ describe('shell', () => {
     assert.equal(reading(), '22 °C · 71.6 °F', 'the live sample runs');
     page.all('.pillar').find(a => a.getAttribute('href') === '#workers').click();
     assert.equal(page.all('article')[0].getAttribute('data-demo'), 'workers');
+    page.dispose();
+  });
+
+  it('lists every repository of the family in the home page’s GitHub menu, as links to a new tab', () => {
+    const page = open(() => <App />);
+    const menu = page.all('.repo-menu')[0];
+    const button = menu.querySelector('button');
+    const shown = () => menu.classList.contains('open');
+    assert.equal(button.getAttribute('aria-expanded'), 'false');
+    button.click();
+    assert.ok(shown(), 'the button shows it');
+    assert.equal(button.getAttribute('aria-expanded'), 'true');
+    const names = ['rui', 'rrx-core', 'ren-core', 'ren-dom', 'ren-canv', 'ren-skia', 'ren-three', 'ren-html', 'ren-json', 'rui-core', 'ren-show', 'rui-show', 'ren-bench'];
+    const links = page.all('.repos a');
+    assert.deepEqual(links.map(a => a.getAttribute('href')), names.map(n => `https://github.com/wiltonlazary/${n}`));
+    assert.deepEqual(links.map(a => a.querySelector('b').textContent), names);
+    assert.ok(links.every(a => a.getAttribute('target') === '_blank' && a.getAttribute('rel') === 'noopener noreferrer'), 'each opens in a new tab, without its opener');
+    assert.deepEqual(page.all('.repos h3').map(h => h.textContent), ['Workspace', 'Libraries', 'Applications', 'Tooling']);
+    links[0].dispatchEvent(new page.window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    assert.ok(!shown(), 'Escape hides it');
+    button.click();
+    page.all('.pillar')[0].dispatchEvent(new page.window.PointerEvent('pointerdown', { bubbles: true }));
+    assert.ok(!shown(), 'a press elsewhere hides it');
+    button.click();
+    button.click();
+    assert.ok(!shown(), 'the button hides it again');
     page.dispose();
   });
 
