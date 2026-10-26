@@ -6,7 +6,7 @@
 // there, a real touch swipe on the events demo's pads (touchAction, onPointerCancel), and every page at 360 without horizontal overflow or a canvas
 // shown at another size than it draws; then Showroom on an 800-wide tablet.
 //
-//   flock "$HOME/.cache/chrome-bench.lock" node scripts/browser.mjs [--only compiled|runtime] [--demos mail,showroom] [--no-phone | --phone]
+//   flock -w 1800 "$HOME/.cache/chrome-bench.lock" node scripts/browser.mjs [--only compiled|runtime] [--demos mail,showroom] [--no-phone | --phone]
 //
 // Run scripts/build.mjs first. Take the machine-wide Chrome lock, as above:
 // only one Chrome runs at a time.
