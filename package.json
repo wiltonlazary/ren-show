@@ -12,7 +12,7 @@
     "build": "node scripts/build.mjs",
     "serve": "node scripts/serve.mjs",
     "check": "tsc -p tsconfig.json",
-    "browser": "flock $HOME/.cache/chrome-bench.lock node scripts/browser.mjs",
+    "browser": "flock -w 1800 $HOME/.cache/chrome-bench.lock node scripts/browser.mjs",
     "test": "tsc -p tsconfig.json && node --import ren-core/loader --test test/*.test.jsx test/timers.test.js && node --import ren-core/compiled --test test/*.test.jsx && node scripts/build.mjs"
   },
   "dependencies": {
