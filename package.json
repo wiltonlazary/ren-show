@@ -1,6 +1,6 @@
 {
   "name": "ren-show",
-  "version": "0.1.13",
+  "version": "0.1.14",
   "description": "A live tour of every rrx-core and ren-core feature: signals to worker roots, on the DOM ($dom, $shadow; ren-dom), Skia (ren-skia) and three.js (ren-three) renderers (the drawn two on ren-canv), together on one page, and rendered once to HTML (ren-html) and data (ren-json).",
   "type": "module",
   "private": true,
